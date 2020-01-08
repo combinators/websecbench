@@ -4,12 +4,14 @@ import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.body.MethodDeclaration
 import com.github.javaparser.ast.expr.Expression
 import com.github.javaparser.ast.stmt.Statement
+import org.combinators.templating.persistable.{JavaPersistable, Persistable}
 import org.combinators.templating.twirl.Java
 
 case class CodeGenerator[NodeType](
   methods: List[MethodDeclaration],
   currentNode: NodeType,
-  toMethodBody: NodeType => Seq[Statement]
+  toMethodBody: NodeType => Seq[Statement],
+  unitTests : Seq[CompilationUnit]
 ) {
   def toCode(benchmarkName: String): CompilationUnit = {
     Java(
@@ -38,4 +40,16 @@ object CodeGenerator {
 
   def responseExpr: Expression =
     Java(s"response").expression()
+
+
+
+  def persistable[A](benchmarkName: String)(implicit javaPersistable: Persistable.Aux[CompilationUnit]): Persistable.Aux[CodeGenerator[A]] =
+    new Persistable {
+      type T = CodeGenerator[A]
+      def rawText(elem: CodeGenerator[A]) =
+        javaPersistable.rawText(elem.toCode(benchmarkName))
+
+      def path(elem: CodeGenerator[A]) =
+        javaPersistable.path(elem.toCode(benchmarkName))
+    }
 }
