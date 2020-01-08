@@ -27,10 +27,10 @@ object CloseInputStream extends TaggedComponent {
          |""".stripMargin).methodDeclarations().head
 	}
 
-	def apply(fileName: CodeGenerator[Expression]): CodeGenerator[Expression] = {
-		fileName.copy(
-			methods = closeInputStream +: fileName.methods,
-			currentNode = Java(s"closeInputStream(${fileName.currentNode})").expression[Expression]()
+	def apply(inputStreamGenerator: CodeGenerator[Expression]): CodeGenerator[Expression] = {
+		inputStreamGenerator.copy(
+			methods = closeInputStream +: inputStreamGenerator.methods,
+			currentNode = Java(s"closeInputStream(${inputStreamGenerator.currentNode}, ${CodeGenerator.responseExpr})").expression[Expression]()
 		)
 	}
 

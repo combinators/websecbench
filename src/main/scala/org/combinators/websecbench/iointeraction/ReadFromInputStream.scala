@@ -27,7 +27,7 @@ object ReadFromInputStream extends TaggedComponent {
          |          );
          |        response.getWriter().println();
          |        return is;
-         |    } catch (IOException | NullPointerException e) {
+         |    } catch (java.io.IOException | NullPointerException e) {
          |        System.out.println("Couldn't read from InputStream");
          |        response.getWriter().println(
          |            "Problem reading from InputStream: "

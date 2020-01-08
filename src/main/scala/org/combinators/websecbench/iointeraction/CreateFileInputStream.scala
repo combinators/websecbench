@@ -19,12 +19,12 @@ object CreateFileInputStream extends TaggedComponent {
          |public java.io.InputStream openFileInputStream(String filename, HttpServletResponse response) {
          |   try {
          |      java.io.FileInputStream fis = null;
-         |      fis = new java.io.FileInputStream(new java.io.File(fileName));
+         |      fis = new java.io.FileInputStream(new java.io.File(filename));
          |      response.getWriter().println("The beginning of file: '" + org.owasp.esapi.ESAPI
-         |          .encoder().encodeForHTML(fileName) + "' is:");
+         |          .encoder().encodeForHTML(filename) + "' is:");
          |      return fis;
          |   } catch (Exception e) {
-         |        System.out.println("Couldn't open FileInputStream on file: '" + fileName +
+         |        System.out.println("Couldn't open FileInputStream on file: '" + filename +
          |        "'");
          |        response.getWriter().println(
          |        "Problem getting FileInputStream: "
