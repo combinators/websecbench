@@ -16,7 +16,7 @@ object ReadFromInputStream extends TaggedComponent {
   val readFromInputStream: MethodDeclaration = {
     Java(
       s"""
-         |private java.io.InputStream readFromInputStream(java.io.InputStream is, HttpServletResponse response) {
+         |private java.io.InputStream readFromInputStream(java.io.InputStream is, HttpServletResponse response) throws java.io.IOException {
          |    try {
          |        byte[] b = new byte[1000];
          |        int size = is.read(b);

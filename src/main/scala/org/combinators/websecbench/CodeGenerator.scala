@@ -19,12 +19,14 @@ case class CodeGenerator[NodeType](
          |import javax.servlet.http.HttpServlet;
          |import javax.servlet.http.HttpServletRequest;
          |import javax.servlet.http.HttpServletResponse;
+         |import javax.servlet.ServletException;
+         |import java.io.IOException;
          |
          |public class ${benchmarkName} extends HttpServlet {
          |${methods.mkString("\n")}
          |
-         |    public void doPost(HttpServletRequest ${CodeGenerator.requestExpr}, HttpServletResponse ${CodeGenerator.responseExpr}) {
-         |      ${toMethodBody(currentNode).mkString("\n")}
+         |    public void doPost(HttpServletRequest ${CodeGenerator.requestExpr}, HttpServletResponse ${CodeGenerator.responseExpr}) throws ServletException, IOException {
+         |        ${toMethodBody(currentNode).mkString("\n")}
          |    }
          |
          |}

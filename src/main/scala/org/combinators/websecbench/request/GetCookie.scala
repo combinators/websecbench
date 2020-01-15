@@ -16,7 +16,7 @@ object GetCookie extends TaggedComponent {
   val getCookieMethod: MethodDeclaration = {
     Java(
       s"""
-         |public String getCookie(HttpServletRequest request) {
+         |public String getCookie(HttpServletRequest request) throws IOException {
          |   javax.servlet.http.Cookie[] theCookies = request.getCookies();
          |
          |		String param = "noCookieValueSupplied";
