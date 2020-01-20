@@ -11,7 +11,8 @@ case class CodeGenerator[NodeType](
   methods: List[MethodDeclaration],
   currentNode: NodeType,
   toMethodBody: NodeType => Seq[Statement],
-  unitTests : Seq[CompilationUnit]
+  unitTests : Seq[CompilationUnit],
+  metaData: Seq[MetaData]
 ) {
   def toCode(benchmarkName: String): CompilationUnit = {
     Java(
@@ -32,6 +33,10 @@ case class CodeGenerator[NodeType](
          |}
          |
          |""".stripMargin).compilationUnit()
+  }
+
+  def vulnerabilityReport(benchmarkName: String): String = {
+    metaData.map(n => n.toReportElement(benchmarkName)).mkString("\n")
   }
 }
 

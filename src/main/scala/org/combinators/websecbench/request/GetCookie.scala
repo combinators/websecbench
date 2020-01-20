@@ -2,7 +2,7 @@ package org.combinators.websecbench.request
 
 import com.github.javaparser.ast.expr.Expression
 import org.combinators.templating.twirl.Java
-import org.combinators.websecbench.{CodeGenerator, ComponentTag, Repository, TaggedComponent}
+import org.combinators.websecbench.{CodeGenerator, ComponentTag, PathTraversalVulnerability, Repository, TaggedComponent}
 import org.combinators.websecbench.SemanticTypes.JavaString
 import SemanticTypes._
 import com.github.javaparser.ast.body.MethodDeclaration
@@ -38,7 +38,8 @@ object GetCookie extends TaggedComponent {
       methods = List(getCookieMethod),
       currentNode = Java(s"getCookie(${CodeGenerator.requestExpr})").expression[Expression](),
       toMethodBody = expr => Java(s"${expr};").statements(),
-      unitTests = Seq.empty
+      unitTests = Seq.empty,
+      metaData = Seq(PathTraversalVulnerability(true))
     )
   }
 
