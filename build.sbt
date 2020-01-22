@@ -20,40 +20,36 @@ lazy val commonSettings = Seq(
   ),
 
   libraryDependencies ++= Seq(
-    "org.combinators" %% "cls-scala" % "2.0.0+12-8d994c6b",
-    "org.combinators" %% "templating" % "1.0.0+3-bee373e9",
-    "org.combinators" %% "cls-scala-presentation-play-git" % "1.0.0-RC1+8-63d5cf0b",
-    "org.scalameta" %% "scalameta" % "3.4.0",
-    "org.scalameta" %% "contrib" % "3.4.0",
-    "com.h2database" % "h2" % "1.4.196",
+    "org.combinators" %% "templating" % "1.1.0",
     "org.scalactic" %% "scalactic" % "3.0.1" % "test",
-    "org.scalatest" %% "scalatest" % "3.0.1" % "test",
-    guice
+    "org.scalatest" %% "scalatest" % "3.0.1" % "test"
   )
 
 )
 
 lazy val root = (Project(id = "websecbench", base = file(".")))
   .settings(commonSettings: _*)
-  .enablePlugins(SbtTwirl)
-  .enablePlugins(PlayScala)
-  .disablePlugins(PlayLayoutPlugin)
+  .dependsOn(jgitserv)
   .settings(
     moduleName := "websecbench",
+    libraryDependencies ++= Seq(
+      "org.combinators" %% "cls-scala" % "2.0.0+12-8d994c6b",
+      "org.scalameta" %% "scalameta" % "3.4.0",
+      "org.scalameta" %% "contrib" % "3.4.0"
+    )
 
-    sourceDirectories in (Compile, TwirlKeys.compileTemplates) := Seq(
-      sourceDirectory.value / "main" / "java-templates",
-    ),
-    TwirlKeys.templateFormats += ("java" -> "org.combinators.templating.twirl.JavaFormat"),
-    TwirlKeys.templateImports := Seq(),
-    TwirlKeys.templateImports += "org.combinators.templating.twirl.Java",
-    TwirlKeys.templateImports += "com.github.javaparser.ast._",
-    TwirlKeys.templateImports += "com.github.javaparser.ast.body._",
-    TwirlKeys.templateImports += "com.github.javaparser.ast.comments._",
-    TwirlKeys.templateImports += "com.github.javaparser.ast.expr._",
-    TwirlKeys.templateImports += "com.github.javaparser.ast.stmt._",
-    TwirlKeys.templateImports += "com.github.javaparser.ast.`type`._",
-
-    PlayKeys.playMonitoredFiles ++= (sourceDirectories in (Compile, TwirlKeys.compileTemplates)).value
   )
 
+lazy val jgitserv =
+  Project(id = "jgitserv", base = file("jgitserv"))
+    .settings(commonSettings: _*)
+    .settings(
+      moduleName := "jgitserv",
+      libraryDependencies ++= Seq(
+        "com.github.finagle" %% "finchx-core" % "0.31.0",
+        "org.eclipse.jgit" % "org.eclipse.jgit" % "5.4.0.201906121030-r",
+        "commons-io" % "commons-io" % "2.6",
+        "ch.qos.logback" % "logback-classic" % "1.2.3"
+      ),
+      addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
+    )

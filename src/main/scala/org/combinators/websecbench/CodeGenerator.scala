@@ -1,5 +1,7 @@
 package org.combinators.websecbench
 
+import java.nio.charset.{Charset, StandardCharsets}
+import java.nio.file.{Path, Paths}
 import com.github.javaparser.ast.CompilationUnit
 import com.github.javaparser.ast.body.MethodDeclaration
 import com.github.javaparser.ast.expr.Expression
@@ -50,7 +52,7 @@ object CodeGenerator {
 
 
 
-  def persistable[A](benchmarkName: String)(implicit javaPersistable: Persistable.Aux[CompilationUnit]): Persistable.Aux[CodeGenerator[A]] =
+  def compilationUnitPersistable[A](benchmarkName: String)(implicit javaPersistable: Persistable.Aux[CompilationUnit]): Persistable.Aux[CodeGenerator[A]] =
     new Persistable {
       type T = CodeGenerator[A]
       def rawText(elem: CodeGenerator[A]) =
@@ -58,5 +60,14 @@ object CodeGenerator {
 
       def path(elem: CodeGenerator[A]) =
         javaPersistable.path(elem.toCode(benchmarkName))
+    }
+
+  def vulnerabilityReportPersistable[A](benchmarkName: String): Persistable.Aux[CodeGenerator[A]] =
+    new Persistable {
+      type T = CodeGenerator[A]
+      def rawText(elem: CodeGenerator[A]): Array[Byte] =
+        elem.vulnerabilityReport(benchmarkName).getBytes(StandardCharsets.UTF_8)
+
+      def path(elem: CodeGenerator[A]): Path = Paths.get(".", "vulnerabilityreport.xml")
     }
 }

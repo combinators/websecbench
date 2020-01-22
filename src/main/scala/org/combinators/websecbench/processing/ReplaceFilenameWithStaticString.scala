@@ -29,7 +29,8 @@ object ReplaceFilenameWithStaticString extends TaggedComponent {
         .expression[Expression](),
       metaData = fileName.metaData.map{
         case PathTraversalVulnerability(true) => PathTraversalVulnerability(false)
-        case X:MetaData => X}
+        case x:MetaData => x
+      }
     )
   }
 
