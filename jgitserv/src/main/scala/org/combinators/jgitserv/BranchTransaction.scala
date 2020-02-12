@@ -94,11 +94,11 @@ sealed trait BranchTransaction { self =>
     elems.foldLeft(this)((branch, elem) => branch.persist(elem))
 
   /** Commits the current index state to the branch. */
-  def commit(message: String = ""): BranchTransaction = new BranchTransaction {
+  def commit(message: String = "", signed: Boolean = false): BranchTransaction = new BranchTransaction {
     val branchName = self.branchName
     def materialize(inGit: Git): IO[Unit] =
       self.materialize(inGit) *> IO {
-        inGit.commit().setMessage(message).call()
+        inGit.commit().setMessage(message).setSign(signed).call()
       }
   }
 }
