@@ -74,6 +74,7 @@ object CodeGenerator {
       def rawText(elem: CodeGenerator[A]): Array[Byte] =
         elem.vulnerabilityReport(benchmarkName).getBytes(StandardCharsets.UTF_8)
 
-      def path(elem: CodeGenerator[A]): Path = Paths.get(".", "vulnerabilityreport.xml")
+      def path(elem: CodeGenerator[A]): Path = 
+        Paths.get(".", "src", "main", "reports", s"$benchmarkName.xml")
     }
 }
