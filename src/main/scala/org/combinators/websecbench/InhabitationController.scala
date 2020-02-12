@@ -70,7 +70,7 @@ class BenchmarkController(
 
 object Benchmark42
   extends BenchmarkController(
-    tags = Set(ComponentTag.FileIO, ComponentTag.Process, ComponentTag.ReadFromRequest),
+    tags = Set(ComponentTag.FileIO, ComponentTag.Process, ComponentTag.ReadFromRequest, ComponentTag.DatabaseIO),
     targetType = JavaVoid,
     benchmarkName = "benchmark42"
   )

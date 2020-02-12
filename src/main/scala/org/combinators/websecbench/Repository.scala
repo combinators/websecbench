@@ -10,7 +10,8 @@ object Repository {
     Seq(
       iointeraction.components,
       request.components,
-      processing.components
+      processing.components,
+      databaseinteraction.components
     ).flatten
 
   def repository(componentTags: Set[ComponentTag]): ReflectedRepository[Repository.type] = {
