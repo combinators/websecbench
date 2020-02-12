@@ -2,6 +2,9 @@ package org.combinators.websecbench
 
 trait MetaData {
   def toReportElement(testNumber: String): String
+
+  def getTaintSources: Seq[TaintSource]
+  def makeSafe:MetaData
 }
 
 case class PathTraversalVulnerability(isVulnerable: Boolean) extends MetaData {
@@ -16,4 +19,14 @@ case class PathTraversalVulnerability(isVulnerable: Boolean) extends MetaData {
        |</test-metadata>
        |""".stripMargin
   }
+
+  override def getTaintSources = Seq(UncheckedString())
+
+  override def makeSafe: MetaData = PathTraversalVulnerability(false)
 }
+
+
+trait TaintSource
+
+case class UncheckedString() extends TaintSource
+case class StaticString() extends TaintSource

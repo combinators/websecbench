@@ -3,12 +3,10 @@ package org.combinators.websecbench.iointeraction
 import com.github.javaparser.ast.body.MethodDeclaration
 import com.github.javaparser.ast.expr.Expression
 import org.combinators.cls.interpreter.ReflectedRepository
-import org.combinators.templating.twirl.Java
-import org.combinators.websecbench.{CodeGenerator, ComponentTag, Repository, TaggedComponent}
-import org.combinators.websecbench.SemanticTypes.JavaInputStream
-import org.combinators.websecbench.SemanticTypes.JavaFilename
-import org.combinators.websecbench.SemanticTypes.Unused
 import org.combinators.cls.types.syntax._
+import org.combinators.templating.twirl.Java
+import org.combinators.websecbench.{CodeGenerator, ComponentTag, PathTraversalVulnerability, Repository, TaggedComponent}
+import org.combinators.websecbench.SemanticTypes.{JavaFilename, JavaInputStream, Unused}
 
 object CreateFileInputStream extends TaggedComponent {
   val tags = Set(ComponentTag.FileIO)
@@ -39,7 +37,8 @@ object CreateFileInputStream extends TaggedComponent {
   def apply(fileName: CodeGenerator[Expression]): CodeGenerator[Expression] = {
     fileName.copy(
       methods = createFileInputStream +: fileName.methods,
-      currentNode = Java(s"openFileInputStream(${fileName.currentNode}, ${CodeGenerator.responseExpr})").expression[Expression]()
+      currentNode = Java(s"openFileInputStream(${fileName.currentNode}, ${CodeGenerator.responseExpr})").expression[Expression](),
+      metaData  = fileName.metaData :+ PathTraversalVulnerability(true)
       )
   }
 

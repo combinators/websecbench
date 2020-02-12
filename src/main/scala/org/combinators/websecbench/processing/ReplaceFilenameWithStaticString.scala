@@ -4,7 +4,7 @@ import com.github.javaparser.ast.body.MethodDeclaration
 import com.github.javaparser.ast.expr.Expression
 import org.combinators.cls.interpreter.ReflectedRepository
 import org.combinators.templating.twirl.Java
-import org.combinators.websecbench.{CodeGenerator, ComponentTag, MetaData, PathTraversalVulnerability, Repository, TaggedComponent}
+import org.combinators.websecbench.{CodeGenerator, ComponentTag, MetaData, PathTraversalVulnerability, Repository, StaticString, TaggedComponent, TaintSource, UncheckedString}
 import org.combinators.cls.types.syntax._
 import org.combinators.websecbench.SemanticTypes._
 
@@ -27,9 +27,9 @@ object ReplaceFilenameWithStaticString extends TaggedComponent {
       methods = relativeToBenchmarkDir +: fileName.methods,
       currentNode = Java(s"relativeToBenchmarkDir(${fileName.currentNode})")
         .expression[Expression](),
-      metaData = fileName.metaData.map{
-        case PathTraversalVulnerability(true) => PathTraversalVulnerability(false)
-        case x:MetaData => x
+      sourceData = fileName.sourceData.map{
+        case UncheckedString() => StaticString()
+        case x:TaintSource => x
       }
     )
   }

@@ -1,14 +1,14 @@
 package org.combinators.websecbench.request
 
-import com.github.javaparser.ast.expr.Expression
-import org.combinators.templating.twirl.Java
-import org.combinators.websecbench.{CodeGenerator, ComponentTag, PathTraversalVulnerability, Repository, TaggedComponent}
-import org.combinators.websecbench.SemanticTypes.JavaString
-import SemanticTypes._
 import com.github.javaparser.ast.body.MethodDeclaration
+import com.github.javaparser.ast.expr.Expression
 import org.combinators.cls.interpreter.ReflectedRepository
 import org.combinators.cls.types.Type
 import org.combinators.cls.types.syntax._
+import org.combinators.templating.twirl.Java
+import org.combinators.websecbench.{CodeGenerator, ComponentTag, Repository, TaggedComponent, UncheckedString}
+import org.combinators.websecbench.SemanticTypes.JavaString
+import org.combinators.websecbench.request.SemanticTypes._
 
 object GetCookie extends TaggedComponent {
   val tags = Set(ComponentTag.ReadFromRequest)
@@ -39,7 +39,8 @@ object GetCookie extends TaggedComponent {
       currentNode = Java(s"getCookie(${CodeGenerator.requestExpr})").expression[Expression](),
       toMethodBody = expr => Java(s"${expr};").statements(),
       unitTests = Seq.empty,
-      metaData = Seq(PathTraversalVulnerability(true))
+      metaData = Seq.empty,
+      sourceData = Seq(UncheckedString())
     )
   }
 
