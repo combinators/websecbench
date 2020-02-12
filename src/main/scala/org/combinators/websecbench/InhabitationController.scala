@@ -19,6 +19,7 @@ case class BenchmarkSelector(
 class BenchmarkController(
   selectedBenchmarks: Set[BenchmarkSelector],
   benchmarkName: String,
+  shuffleSolutions: Boolean = true,
   port: Int = 9000) extends IOApp {
 
   lazy val buildDotSbt: BundledResource =
@@ -64,11 +65,17 @@ class BenchmarkController(
     }
   }
   
-  def computeTransactions: Seq[BranchTransaction] =
+  def computeTransactions: Seq[BranchTransaction] = {
+    val transactions =
+      selectedBenchmarks.toSeq.flatMap(transactionFor)
+    val suffledTransactions =
+      if (shuffleSolutions) scala.util.Random.shuffle(transactions)
+      else transactions
     emptyBenchmark +:
-    scala.util.Random.shuffle(selectedBenchmarks.toSeq.flatMap(transactionFor))
+      suffledTransactions
       .zipWithIndex
       .map { case (transaction, number) => transaction(number) }
+  }
 
   def run(args: List[String]): IO[ExitCode] = {
     for {
@@ -89,7 +96,8 @@ object Benchmark42
         maximalNumberOfResults = 100
       )
     ),
-    benchmarkName = "benchmark42"
+    benchmarkName = "benchmark42",
+    shuffleSolutions = false
   )
 
 
