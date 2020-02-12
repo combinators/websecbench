@@ -4,6 +4,8 @@ package object processing {
   val components: Seq[TaggedComponent] =
     Seq(
       AttachDirectoryName,
-      ReplaceFilenameWithStaticString
+      ReplaceFilenameWithStaticString,
+      CreateSQLQuery1,
+      URLDecoder
     )
 }

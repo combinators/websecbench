@@ -1,9 +1,8 @@
 package org.combinators.websecbench
 
-package object request {
+package object databaseinteraction {
   val components: Seq[TaggedComponent] =
     Seq(
-      GetCookie,
-      GetHeader
-    )
+      ReadFromDatabase
+      )
 }

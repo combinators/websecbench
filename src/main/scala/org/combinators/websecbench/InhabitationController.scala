@@ -91,7 +91,12 @@ object Benchmark42
   extends BenchmarkController(
     Set(
       BenchmarkSelector(
-        tags = Set(ComponentTag.FileIO, ComponentTag.Process, ComponentTag.ReadFromRequest),
+        tags = Set(
+          ComponentTag.FileIO,
+          ComponentTag.Process,
+          ComponentTag.ReadFromRequest,
+          ComponentTag.DatabaseIO
+        ),
         targetType = JavaVoid,
         maximalNumberOfResults = 100
       )

@@ -14,7 +14,8 @@ case class CodeGenerator[NodeType](
   currentNode: NodeType,
   toMethodBody: NodeType => Seq[Statement],
   unitTests : Seq[CompilationUnit],
-  metaData: Seq[MetaData]
+  metaData: Seq[MetaData],
+  sourceData: Seq[TaintSource]
 ) {
   def toCode(benchmarkName: String): CompilationUnit = {
     Java(
@@ -38,7 +39,12 @@ case class CodeGenerator[NodeType](
   }
 
   def vulnerabilityReport(benchmarkName: String): String = {
-    metaData.map(n => n.toReportElement(benchmarkName)).mkString("\n")
+    metaData.map(n =>{
+      n.getTaintSources.intersect(sourceData).isEmpty match {
+        case true => n.makeSafe.toReportElement(benchmarkName)
+        case false => n.toReportElement(benchmarkName)
+      }
+    }).mkString("\n")
   }
 }
 
