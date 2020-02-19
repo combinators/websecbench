@@ -7,7 +7,7 @@ import org.combinators.templating.twirl.Java
 import org.combinators.websecbench.{CodeGenerator, ComponentTag, Repository, TaggedComponent}
 import org.combinators.websecbench.SemanticTypes.JavaInputStream
 import org.combinators.websecbench.SemanticTypes.JavaVoid
-import org.combinators.websecbench.SemanticTypes.{Used, Unused}
+import org.combinators.websecbench.SemanticTypes.{Used, Unused, UsageStatus}
 import org.combinators.cls.types.syntax._
 
 object CloseInputStream extends TaggedComponent {
@@ -15,7 +15,7 @@ object CloseInputStream extends TaggedComponent {
 	val closeInputStream: MethodDeclaration = {
 		Java(
 				s"""
-         |private void closeInputStream(java.io.InputStream is, HttpServletResponse response) {
+         |private void closeInputStream(java.io.InputStream is) {
          |    try {
          |    	if(is != null) {
          |        is.close();
@@ -30,7 +30,7 @@ object CloseInputStream extends TaggedComponent {
 	def apply(inputStreamGenerator: CodeGenerator[Expression]): CodeGenerator[Expression] = {
 		inputStreamGenerator.copy(
 			methods = closeInputStream +: inputStreamGenerator.methods,
-			currentNode = Java(s"closeInputStream(${inputStreamGenerator.currentNode}, ${CodeGenerator.responseExpr})").expression[Expression]()
+			currentNode = Java(s"closeInputStream(${inputStreamGenerator.currentNode})").expression[Expression]()
 		)
 	}
 

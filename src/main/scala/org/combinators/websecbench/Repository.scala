@@ -17,7 +17,7 @@ object Repository {
   def repository(componentTags: Set[ComponentTag]): ReflectedRepository[Repository.type] = {
     val selectedComponents = components.filter(comp => comp.tags.intersect(componentTags).nonEmpty)
 
-    selectedComponents.foldLeft(ReflectedRepository(this, classLoader = getClass.getClassLoader)) { case (repo, component) =>
+    selectedComponents.foldLeft(ReflectedRepository(this, classLoader = getClass.getClassLoader,substitutionSpace = SemanticTypes.kinding)) { case (repo, component) =>
       component.addToRepository(repo)
     }
   }
