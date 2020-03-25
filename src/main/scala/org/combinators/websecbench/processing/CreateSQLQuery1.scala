@@ -14,7 +14,7 @@ object CreateSQLQuery1 extends TaggedComponent {
 
   val relativeToBenchmarkDir: MethodDeclaration = {
     Java(s"""
-            |public String relativeToBenchmarkDir(String param) {
+            |public String createSQLQuery(String param) {
             |   return "{call " + param + "}";
             |}
             |""".stripMargin).methodDeclarations().head
@@ -23,12 +23,12 @@ object CreateSQLQuery1 extends TaggedComponent {
   def apply(fileName: CodeGenerator[Expression]): CodeGenerator[Expression] = {
     fileName.copy(
       methods = relativeToBenchmarkDir +: fileName.methods,
-      currentNode = Java(s"relativeToBenchmarkDir(${fileName.currentNode})")
+      currentNode = Java(s"createSQLQuery(${fileName.currentNode})")
         .expression[Expression]()
       )
   }
 
-  val semanticType = JavaString :&: Decoded =>: JavaString :&: JavaSQL
+  val semanticType = JavaString :&: Decoded =>: JavaSQL
 
   def addToRepository(
                        repository: ReflectedRepository[Repository.type]
