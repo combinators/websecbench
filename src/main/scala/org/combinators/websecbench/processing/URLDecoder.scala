@@ -14,7 +14,7 @@ object URLDecoder extends TaggedComponent {
 
   val relativeToBenchmarkDir: MethodDeclaration = {
     Java(s"""
-            |public String urlDecoding(String param) {
+            |public String urlDecoding(String param) throws java.io.UnsupportedEncodingException {
             |   return java.net.URLDecoder.decode(param, "UTF-8");
             |}
             |""".stripMargin).methodDeclarations().head
