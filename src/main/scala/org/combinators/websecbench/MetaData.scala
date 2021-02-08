@@ -26,7 +26,8 @@ trait MetaData {
   def makeSafe: MetaData
 }
 
-final case class PathTraversalVulnerability(isVulnerable: Boolean) extends MetaData {
+final case class PathTraversalVulnerability(isVulnerable: Boolean)
+    extends MetaData {
   def toReportElement(testNumber: String): String = {
     s"""
        |<test-metadata>
@@ -44,7 +45,8 @@ final case class PathTraversalVulnerability(isVulnerable: Boolean) extends MetaD
   override def makeSafe: MetaData = PathTraversalVulnerability(false)
 }
 
-final case class SQLInjectionVulnerability(isVulnerable: Boolean) extends MetaData {
+final case class SQLInjectionVulnerability(isVulnerable: Boolean)
+    extends MetaData {
   def toReportElement(testNumber: String): String = {
     s"""
        |<test-metadata>
