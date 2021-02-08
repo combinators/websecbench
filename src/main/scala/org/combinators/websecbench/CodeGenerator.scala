@@ -28,7 +28,7 @@ import com.github.javaparser.ast.stmt.Statement
 import org.combinators.templating.persistable.{JavaPersistable, Persistable}
 import org.combinators.templating.twirl.Java
 
-case class CodeGenerator[NodeType](
+final case class CodeGenerator[NodeType](
     methods: List[MethodDeclaration],
     currentNode: NodeType,
     toMethodBody: NodeType => Seq[Statement],

@@ -33,7 +33,7 @@ import org.combinators.templating.persistable.BundledResource
 import org.combinators.websecbench.SemanticTypes.JavaVoid
 import org.eclipse.jgit.lib.BranchConfig
 
-case class BenchmarkSelector(
+final case class BenchmarkSelector(
     tags: Set[ComponentTag],
     targetType: Type,
     maximalNumberOfResults: Int
@@ -120,7 +120,7 @@ class BenchmarkController(
 
   def run(args: List[String]): IO[ExitCode] = {
     for {
-      _ <- IO { println(s"Computing solutions") }
+      _ <- IO { println("Computing solutions") }
       transactions = computeTransactions
       _ <- IO {
         println(

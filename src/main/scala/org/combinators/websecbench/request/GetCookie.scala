@@ -65,7 +65,7 @@ object GetCookie extends TaggedComponent {
       toMethodBody = expr => Java(s"${expr};").statements(),
       unitTests = Seq.empty,
       metaData = Seq.empty,
-      sourceData = Seq(UncheckedString())
+      sourceData = Seq(UncheckedString)
     )
   }
 

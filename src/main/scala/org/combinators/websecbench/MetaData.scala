@@ -26,7 +26,7 @@ trait MetaData {
   def makeSafe: MetaData
 }
 
-case class PathTraversalVulnerability(isVulnerable: Boolean) extends MetaData {
+final case class PathTraversalVulnerability(isVulnerable: Boolean) extends MetaData {
   def toReportElement(testNumber: String): String = {
     s"""
        |<test-metadata>
@@ -39,12 +39,12 @@ case class PathTraversalVulnerability(isVulnerable: Boolean) extends MetaData {
        |""".stripMargin
   }
 
-  override def getTaintSources = Seq(UncheckedString())
+  override def getTaintSources = Seq(UncheckedString)
 
   override def makeSafe: MetaData = PathTraversalVulnerability(false)
 }
 
-case class SQLInjectionVulnerability(isVulnerable: Boolean) extends MetaData {
+final case class SQLInjectionVulnerability(isVulnerable: Boolean) extends MetaData {
   def toReportElement(testNumber: String): String = {
     s"""
        |<test-metadata>
@@ -57,12 +57,12 @@ case class SQLInjectionVulnerability(isVulnerable: Boolean) extends MetaData {
        |""".stripMargin
   }
 
-  override def getTaintSources = Seq(UncheckedString())
+  override def getTaintSources = Seq(UncheckedString)
 
   override def makeSafe: MetaData = SQLInjectionVulnerability(false)
 }
 
 trait TaintSource
 
-case class UncheckedString() extends TaintSource
-case class StaticString() extends TaintSource
+case object UncheckedString extends TaintSource
+case object StaticString extends TaintSource

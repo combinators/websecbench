@@ -41,7 +41,11 @@ lazy val commonSettings = Seq(
        |Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
        |""".stripMargin
 	)),
-  scapegoatVersion in ThisBuild := "1.4.7"
+  scapegoatVersion in ThisBuild := "1.4.7",
+  scapegoatDisabledInspections := Seq(
+    "EmptyInterpolatedString",
+    "UnsafeTraversableMethods"
+  )
 )
 
 lazy val root = (Project(id = "websecbench", base = file(".")))

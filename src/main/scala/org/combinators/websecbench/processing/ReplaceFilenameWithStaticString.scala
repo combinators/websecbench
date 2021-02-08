@@ -22,18 +22,9 @@ package org.combinators.websecbench.processing
 import com.github.javaparser.ast.body.MethodDeclaration
 import com.github.javaparser.ast.expr.Expression
 import org.combinators.cls.interpreter.ReflectedRepository
+import org.combinators.cls.types.Type
 import org.combinators.templating.twirl.Java
-import org.combinators.websecbench.{
-  CodeGenerator,
-  ComponentTag,
-  MetaData,
-  PathTraversalVulnerability,
-  Repository,
-  StaticString,
-  TaggedComponent,
-  TaintSource,
-  UncheckedString
-}
+import org.combinators.websecbench.{CodeGenerator, ComponentTag, MetaData, PathTraversalVulnerability, Repository, StaticString, TaggedComponent, TaintSource, UncheckedString}
 import org.combinators.cls.types.syntax._
 import org.combinators.websecbench.SemanticTypes._
 
@@ -56,13 +47,13 @@ object ReplaceFilenameWithStaticString extends TaggedComponent {
       currentNode = Java(s"relativeToBenchmarkDir(${fileName.currentNode})")
         .expression[Expression](),
       sourceData = fileName.sourceData.map {
-        case UncheckedString() => StaticString()
+        case UncheckedString => StaticString
         case x: TaintSource    => x
       }
     )
   }
 
-  val semanticType = JavaString =>: JavaFilename
+  val semanticType: Type = JavaString =>: JavaFilename
 
   def addToRepository(
       repository: ReflectedRepository[Repository.type]
