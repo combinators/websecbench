@@ -33,7 +33,6 @@ object SemanticTypes {
   val Encoded: Type = Constructor("Encoded")
   val JavaSQL: Type = Constructor("JavaSQL");
 
-  val UsageStatus: Variable= Variable("streamStatus")
+  val UsageStatus: Variable = Variable("streamStatus")
   val kinding = Kinding(UsageStatus).addOption(Used).addOption(Unused)
 }
-

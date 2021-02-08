@@ -29,16 +29,15 @@ import org.combinators.templating.persistable.{JavaPersistable, Persistable}
 import org.combinators.templating.twirl.Java
 
 case class CodeGenerator[NodeType](
-  methods: List[MethodDeclaration],
-  currentNode: NodeType,
-  toMethodBody: NodeType => Seq[Statement],
-  unitTests : Seq[CompilationUnit],
-  metaData: Seq[MetaData],
-  sourceData: Seq[TaintSource]
+    methods: List[MethodDeclaration],
+    currentNode: NodeType,
+    toMethodBody: NodeType => Seq[Statement],
+    unitTests: Seq[CompilationUnit],
+    metaData: Seq[MetaData],
+    sourceData: Seq[TaintSource]
 ) {
   def toCode(benchmarkName: String): CompilationUnit = {
-    Java(
-      s"""
+    Java(s"""
          |import javax.servlet.http.HttpServlet;
          |import javax.servlet.http.HttpServletRequest;
          |import javax.servlet.http.HttpServletResponse;
@@ -58,15 +57,16 @@ case class CodeGenerator[NodeType](
   }
 
   def vulnerabilityReport(benchmarkName: String): String = {
-    metaData.map(n =>{
-      n.getTaintSources.intersect(sourceData).isEmpty match {
-        case true => n.makeSafe.toReportElement(benchmarkName)
-        case false => n.toReportElement(benchmarkName)
-      }
-    }).mkString("\n")
+    metaData
+      .map(n => {
+        n.getTaintSources.intersect(sourceData).isEmpty match {
+          case true  => n.makeSafe.toReportElement(benchmarkName)
+          case false => n.toReportElement(benchmarkName)
+        }
+      })
+      .mkString("\n")
   }
 }
-
 
 object CodeGenerator {
   def requestExpr: Expression =
@@ -75,9 +75,9 @@ object CodeGenerator {
   def responseExpr: Expression =
     Java(s"response").expression()
 
-
-
-  def compilationUnitPersistable[A](benchmarkName: String)(implicit javaPersistable: Persistable.Aux[CompilationUnit]): Persistable.Aux[CodeGenerator[A]] =
+  def compilationUnitPersistable[A](benchmarkName: String)(
+      implicit javaPersistable: Persistable.Aux[CompilationUnit]
+  ): Persistable.Aux[CodeGenerator[A]] =
     new Persistable {
       type T = CodeGenerator[A]
       def rawText(elem: CodeGenerator[A]) =
@@ -87,13 +87,15 @@ object CodeGenerator {
         javaPersistable.path(elem.toCode(benchmarkName))
     }
 
-  def vulnerabilityReportPersistable[A](benchmarkName: String): Persistable.Aux[CodeGenerator[A]] =
+  def vulnerabilityReportPersistable[A](
+      benchmarkName: String
+  ): Persistable.Aux[CodeGenerator[A]] =
     new Persistable {
       type T = CodeGenerator[A]
       def rawText(elem: CodeGenerator[A]): Array[Byte] =
         elem.vulnerabilityReport(benchmarkName).getBytes(StandardCharsets.UTF_8)
 
-      def path(elem: CodeGenerator[A]): Path = 
+      def path(elem: CodeGenerator[A]): Path =
         Paths.get(".", "src", "main", "reports", s"$benchmarkName.xml")
     }
 }

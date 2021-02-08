@@ -23,5 +23,5 @@ package object databaseinteraction {
   val components: Seq[TaggedComponent] =
     Seq(
       ReadFromDatabase
-      )
+    )
 }

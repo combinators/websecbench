@@ -23,7 +23,7 @@ trait MetaData {
   def toReportElement(testNumber: String): String
 
   def getTaintSources: Seq[TaintSource]
-  def makeSafe:MetaData
+  def makeSafe: MetaData
 }
 
 case class PathTraversalVulnerability(isVulnerable: Boolean) extends MetaData {
