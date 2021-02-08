@@ -33,18 +33,19 @@ object CreateFileOutputStream extends TaggedComponent{
   val createFileInputStream: MethodDeclaration = {
     Java(
       s"""
-         |public java.io.FileOutputStream openFileOutputStream(String filename, HttpServletResponse response) throws java.io.IOException {
+         |public java.io.FileOutputStream openFileOutputStream(String fileName, HttpServletResponse response) throws java.io.IOException {
          |    java.io.FileOutputStream fos = null;
          |    try {
-         |        fos = new FileOutputStream(fileName, false);
-         |        response.getWriter.println("Now ready to write to file: " +
-         |          org.owasp.esapi.ESAPI.encoder.encodeForHTML(fileName));
-         |        return fos;
+         |        fos = new java.io.FileOutputStream(fileName, false);
+         |        response.getWriter().println("Now ready to write to file: " +
+         |          org.owasp.esapi.ESAPI.encoder().encodeForHTML(fileName));
          |    }
          |    catch (Exception e) {
          |			System.out.println("Couldn't open FileOutputStream on file: '" + fileName + "'");
          |		}
-         |
+         |    finally{
+         |      return fos;
+         |    }
          |}
          |""".stripMargin).methodDeclarations().head
   }

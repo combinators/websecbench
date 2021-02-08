@@ -33,8 +33,8 @@ object CloseOutputStream extends TaggedComponent {
       s"""
          |private void closeOutputStream(java.io.OutputStream os) {
          |    try {
-         |    	if(is != null) {
-         |        is.close();
+         |    	if(os != null) {
+         |        os.close();
          |      }
          |    } catch (Exception e) {
          |        System.out.println("Couldn't close OutStream");
