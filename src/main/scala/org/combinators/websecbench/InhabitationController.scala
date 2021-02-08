@@ -18,20 +18,15 @@
  */
 
 package org.combinators.websecbench
-import java.nio.file.Paths
-
+import java.nio.file.{Files, Path, Paths}
 import cats.effect.{ExitCode, IO, IOApp}
+import cats.implicits._
 import com.github.javaparser.ast.expr.Expression
 import org.combinators.templating.persistable.JavaPersistable._
 import org.combinators.cls.types.Type
-import org.combinators.jgitserv.{
-  BranchTransaction,
-  GitService,
-  ResourcePersistable
-}
+import org.combinators.jgitserv.{BranchTransaction, ResourcePersistable}
 import org.combinators.templating.persistable.BundledResource
 import org.combinators.websecbench.SemanticTypes.JavaVoid
-import org.eclipse.jgit.lib.BranchConfig
 
 final case class BenchmarkSelector(
     tags: Set[ComponentTag],
@@ -42,8 +37,8 @@ final case class BenchmarkSelector(
 class BenchmarkController(
     selectedBenchmarks: Set[BenchmarkSelector],
     benchmarkName: String,
-    shuffleSolutions: Boolean = true,
-    port: Int = 9000
+    targetDirectory: Path,
+    shuffleSolutions: Boolean = true
 ) extends IOApp {
 
   lazy val buildDotSbt: BundledResource =
@@ -65,12 +60,11 @@ class BenchmarkController(
     )
   lazy val storeResource = ResourcePersistable.apply
 
-  lazy val emptyBenchmark: BranchTransaction =
-    BranchTransaction
-      .empty(benchmarkName)
-      .persist(buildDotSbt)(storeResource)
-      .persist(owaspUtils)(storeResource)
-      .commit("Add shared resources")
+  lazy val emptyBenchmark: IO[Unit] = IO {
+    Files.createDirectories(targetDirectory)
+    storeResource.persistOverwriting(targetDirectory, buildDotSbt)
+    storeResource.persistOverwriting(targetDirectory, owaspUtils)
+  }
 
   lazy val numberFormat: String = {
     val maxBenchmarks = selectedBenchmarks.map(_.maximalNumberOfResults).sum
@@ -79,7 +73,7 @@ class BenchmarkController(
 
   def transactionFor(
       benchmarkSelector: BenchmarkSelector
-  ): Seq[Int => BranchTransaction] = {
+  ): Seq[Int => IO[Unit]] = {
     val Gamma = Repository.repository(benchmarkSelector.tags)
     val results =
       Gamma.inhabit[CodeGenerator[Expression]](benchmarkSelector.targetType)
@@ -87,7 +81,7 @@ class BenchmarkController(
       .map(s => Math.min(benchmarkSelector.maximalNumberOfResults, s.toInt))
       .getOrElse(benchmarkSelector.maximalNumberOfResults)
 
-    (0 until toStore).foldLeft(Seq.empty[Int => BranchTransaction]) {
+    (0 until toStore).foldLeft(Seq.empty[Int => IO[Unit]]) {
       case (transactions, resultNumber) =>
         val nextTransaction = (nextNumber: Int) => {
           val currentName =
@@ -97,17 +91,16 @@ class BenchmarkController(
           val storeVulnerabilityReport = CodeGenerator
             .vulnerabilityReportPersistable[Expression](currentName)
           val result = results.interpretedTerms.index(BigInt(resultNumber))
-          BranchTransaction
-            .checkout(benchmarkName)
-            .persist(result)(storeCompilationUnit)
-            .persist(result)(storeVulnerabilityReport)
-            .commit(s"Add benchmark ${currentName}")
+          IO[Unit] {
+            storeCompilationUnit.persistOverwriting(targetDirectory, result)
+            storeVulnerabilityReport.persistOverwriting(targetDirectory, result)
+          }
         }
         nextTransaction +: transactions
     }
   }
 
-  def computeTransactions: Seq[BranchTransaction] = {
+  def computeTransactions: Seq[IO[Unit]] = {
     val transactions =
       selectedBenchmarks.toSeq.flatMap(transactionFor)
     val suffledTransactions =
@@ -122,13 +115,8 @@ class BenchmarkController(
     for {
       _ <- IO { println("Computing solutions") }
       transactions = computeTransactions
-      _ <- IO {
-        println(
-          s"Use: git clone http://127.0.0.1:${port}/$benchmarkName $benchmarkName"
-        )
-      }
-      exitCode <- new GitService(transactions, benchmarkName, port).run(args)
-    } yield exitCode
+      _ <- transactions.toList.sequence
+    } yield ExitCode.Success
   }
 }
 
@@ -147,5 +135,6 @@ object Benchmark42
         )
       ),
       benchmarkName = "benchmark42",
+      targetDirectory = Paths.get("target", "benchmarks"),
       shuffleSolutions = false
     )

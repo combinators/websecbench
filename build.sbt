@@ -13,7 +13,8 @@ lazy val commonSettings = Seq(
     "-unchecked",
     "-deprecation",
     "-feature",
-    "-language:implicitConversions"
+    "-language:implicitConversions",
+    "-Ypartial-unification"
   ),
 
   libraryDependencies ++= Seq(
@@ -56,7 +57,9 @@ lazy val root = (Project(id = "websecbench", base = file(".")))
       "org.combinators" %% "cls-scala" % "3.0.0",
       "org.scalameta" %% "scalameta" % "3.4.0",
       "org.scalameta" %% "contrib" % "3.4.0",
-      "org.combinators" %% "jgitserv" % "0.0.1"
+      "org.combinators" %% "jgitserv" % "0.0.1",
+      "org.typelevel" %% "cats-core" % "2.3.1",
+      "org.typelevel" %% "cats-effect" % "2.3.1"
     )
 
   )
