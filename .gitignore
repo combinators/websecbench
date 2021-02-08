@@ -213,3 +213,5 @@ tags
 
 .idea/
 project/metals.sbt
+
+.bsp/sbt.json
